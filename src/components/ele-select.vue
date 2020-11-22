@@ -1,8 +1,8 @@
 <template>
   <div>
-    <el-select :value="watchValue" @change="change" filterable v-el-loadmore:number="loadMore(number)"
-      :filter-method="filterMethods">
-      <el-option v-for="(item, i) in comOption" :key="i" :value="item.value" :label="item.label">
+    <el-select :value="bindValue" @change="change" v-el-loadmore:number="loadMore(number)">
+      <el-input size="small" v-model="search"></el-input>
+      <el-option style="width: 200px" v-for="(item, i) in comOption" :key="i" :value="item.value" :label="item.label">
       </el-option>
     </el-select>
   </div>
@@ -39,7 +39,8 @@
         number: 10,
         copyOption: [],
         option: [],
-        watchValue: ''
+        watchValue: '',
+        search: ''
       }
     },
     model: {
@@ -64,34 +65,39 @@
       },
     },
     methods: {
-      filterMethods(val) {
-        this.watchValue = val;
-        if (val) {
-          this.option = this.copyOption.filter(item => {
-            return String(item.value).indexOf(val) > -1
-          });
-        } else {
-          this.option = JSON.parse(JSON.stringify(this.copyOption))
-        }
-      },
       change(val) {
-        this.$emit('change', val)
+        this.$emit('change', val);
+        // this.$emit('eleChange',)
       },
       loadMore(n) {
         return () => this.number += 5 //每次滚动到底部可以新增条数  可自定义
       },
     },
     watch: {
-      bindValue() {
-        this.watchValue = this.bindValue
+      search(newValue, oldValue) {
+        if (newValue) {
+          this.option = this.copyOption.filter(item => {
+            return item.value.indexOf(newValue) > -1
+          })
+        } else {
+          this.option = this.copyOption;
+        }
+
       }
     }
   }
 
 </script>
 <style>
-  .el-select-dropdown__empty {
-    /* visibility: hidden; */
+  /* .el-select-dropdown__empty {
+    visibility: hidden;
+  } */
+  .el-select-dropdown {
+    max-width: 40%;
+  }
+
+  .el-select-dropdown__item {
+    overflow: visible;
   }
 
 </style>
